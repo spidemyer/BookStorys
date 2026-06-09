@@ -80,3 +80,4 @@ INSERT INTO livros (titulo, autor, estoque, url_capa, funcionario_rf) VALUES
     'img/dom-casmurro.jpg', 
     '123456'
 );
+

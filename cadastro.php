@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
 
-    if ($senha !== $confirmar_senha) { //confirma se as senhas são iguais, se não mostra mensagem de erro
+    if ($senha !== $confirmar_senha) { //confirma se as senhas são iguais, se não, mostra mensagem de erro
         $erro = "As senhas não coincidem!";
     } elseif (strlen($senha) < 6) {
         $erro = "A senha deve conter no mínimo 6 caracteres!";
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
                 $erro = "Este e-mail já está cadastrado!";
             } else {
                 // Criptografa a senha para salvar com segurança
-                $senhaHash = password_hash($senha, PASSWORD_BCRYPT);
+                $senhaHash = password_hash($senha, PASSWORD_BCRYPT); //usei da internet para essa parte
                 
                 // Insere no PostgreSQL
                 $stmt = $conn->prepare("INSERT INTO usuarios (nome, idade, email, senha) VALUES (?, ?, ?, ?)");
