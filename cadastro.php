@@ -12,10 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
     $senha = $_POST['senha'];
     $confirmar_senha = $_POST['confirmar_senha'];
 
-    if ($senha !== $confirmar_senha) { //confirma se as senhas são iguais, se não, mostra mensagem de erro
+    // Validações
+    if ($senha !== $confirmar_senha) { 
         $erro = "As senhas não coincidem!";
-    } elseif (strlen($senha) < 6) {
-        $erro = "A senha deve conter no mínimo 6 caracteres!";
+    } elseif (strlen($senha) < 6 || strlen($senha) > 10) { // Validação do tamanho da senha
+        $erro = "A senha deve conter entre 6 e 10 caracteres!";
+    } elseif ($idade < 0 || $idade > 100) { // Validação da idade
+        $erro = "A idade deve ser entre 0 e 100 anos!";
     } else {
         try {
             // Verifica se o e-mail já existe
@@ -26,14 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
                 $erro = "Este e-mail já está cadastrado!";
             } else {
                 // Criptografa a senha para salvar com segurança
-                $senhaHash = password_hash($senha, PASSWORD_BCRYPT); //usei da internet para essa parte
+                $senhaHash = password_hash($senha, PASSWORD_BCRYPT); 
                 
                 // Insere no PostgreSQL
                 $stmt = $conn->prepare("INSERT INTO usuarios (nome, idade, email, senha) VALUES (?, ?, ?, ?)");
                 $stmt->execute([$nome, $idade, $email, $senhaHash]);
                 
-                $sucesso = "Cadastro realizado com sucesso! Redirecionando...";
-                header("Refresh: 2; url=index.php");
+                $sucesso = "Novo cliente cadastrado com sucesso!";
+                // Após cadastrar, limpa os campos e permanece na página para novos cadastros se necessário, ou volta pro estoque após 2 segundos
+                header("Refresh: 2; url=biblioteca.php");
             }
         } catch (PDOException $e) {
             $erro = "Erro no cadastro: " . $e->getMessage();
@@ -46,40 +50,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookStorys - Cadastro</title>
+    <title>BookStorys - Cadastrar Cliente</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="card-auth">
-        <div class="logo-icon"><i class="fa-solid fa-book-open"></i></div>
+        <div class="logo-icon"><i class="fa-solid fa-user-shield"></i></div>
         <h2>BookStorys</h2>
-        <p class="subtitle">Crie sua conta para acessar a biblioteca</p>
+        <p class="subtitle">Painel de Cadastro de Novo Cliente</p>
 
         <?php if($erro): ?> <div class="msg-erro"><?= $erro ?></div> <?php endif; ?>
         <?php if($sucesso): ?> <div class="msg-erro" style="background:#ecfdf5; color:#059669; border-color:#059669;"><?= $sucesso ?></div> <?php endif; ?>
 
         <form action="cadastro.php" method="POST">
             <div class="input-group">
-                <label>Nome Completo</label>
-                <input type="text" name="nome" placeholder="Seu nome completo" required>
+                <label>Nome do Cliente</label>
+                <input type="text" name="nome" placeholder="Nome completo do cliente" required>
             </div>
             <div class="input-group">
                 <label>Idade</label>
-                <input type="number" name="idade" placeholder="Sua idade" required>
+                <input type="number" name="idade" placeholder="Idade" min="0" max="100" required>
             </div>
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" name="email" placeholder="seu@email.com" required>
+                <input type="email" name="email" placeholder="nome.sobrenome@empresa.com" required>
             </div>
             <div class="input-group">
                 <label>Senha</label>
-                <input type="password" name="senha" placeholder="••••••••" required>
+                <input type="password" name="senha" placeholder="••••••••" minlength="6" maxlength="10" required>
             </div>
             <div class="input-group">
                 <label>Confirmar Senha</label>
-                <input type="password" name="confirmar_senha" placeholder="••••••••" required>
+                <input type="password" name="confirmar_senha" placeholder="••••••••" minlength="6" maxlength="10" required>
             </div>  
-            <button type="submit" class="btn">Cadastrar</button>
-            <a href="index.php" class="link-bottom">Já tem uma conta? <span>Faça login</span></a>
+            <button type="submit" class="btn">Cadastrar Cliente</button>
+            <a href="biblioteca.php" class="link-bottom"><i class="fa-solid fa-arrow-left"></i> Voltar para o <span>Login</span></a>
         </form>
+    </div>
+</body>
+</html>

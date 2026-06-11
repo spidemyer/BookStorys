@@ -3,18 +3,12 @@ session_start();
 
 $erro = '';
 
-// Protegendo o carregamento do driver do banco de dados
 try {
-    if (file_exists('conexao.php')) {
-        require_once 'conexao.php';
-    } else {
-        $erro = "Arquivo conexao.php não foi localizado.";
-    }
+    require_once 'conexao.php';
 } catch (Exception $e) {
     $erro = "Falha no sistema de banco de dados.";
 }
 
-// Redireciona se já estiver logado
 if (isset($_SESSION['user_logged']) && $_SESSION['user_logged'] === true) {
     header("Location: biblioteca.php");
     exit;
@@ -36,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($erro)) {
                 $_SESSION['user_id'] = $usuario['id'];
                 $_SESSION['user_nome'] = $usuario['nome'];
                 
-                header("Location: biblioteca.php"); // Redireciona para a biblioteca após login bem-sucedido
+                header("Location: biblioteca.php"); 
                 exit;
             } else {
                 $erro = "E-mail ou senha incorretos."; // Mensagem genérica para evitar exposição de informações

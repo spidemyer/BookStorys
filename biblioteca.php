@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once 'conexao.php'; // Conecta ao banco de dados
+require_once 'conexao.php'; 
 
-// Verifica se o usuário está logado. Se não, redireciona para o login
+// Verifica se o usuário está logado. Se não, redireciona para o login 
 if (!isset($_SESSION['user_logged']) || $_SESSION['user_logged'] !== true) {
     header("Location: index.php");
     exit;
@@ -22,7 +22,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookStorys - Biblioteca</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link class="link-css" rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="body-dashboard">
@@ -32,7 +32,7 @@ try {
             <i class="fa-solid fa-book-open"></i> BookStorys
         </div>
         <div class="nav-actions">
-            <span class="user-name"><i class="fa-regular fa-circle-user"></i> Olá, <?= htmlspecialchars($_SESSION['user_nome']) ?></span>
+            <span class="user-name"><i class="fa-regular fa-circle-user"></i> Olá, <?= htmlspecialchars($_SESSION['user_nome'] ?? 'Leitor') ?></span>
             
             <?php if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true): ?>
                 <a href="admin_estoque.php" class="btn-alt"><i class="fa-solid fa-sliders"></i> Painel Admin</a>
@@ -59,7 +59,7 @@ try {
                     <div class="book-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.2s;">
                         
                         <div style="text-align: center; margin-bottom: 15px;">
-                            <img src="<?= htmlspecialchars($livro['url_capa'] ?? 'img/default-cover.jpg') ?>" alt="Capa de <?= htmlspecialchars($livro['titulo']) ?>" style="width: 100%; max-height: 260px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <img src="<?= htmlspecialchars(!empty($livro['url_capa']) ? $livro['url_capa'] : 'img/default-cover.jpg') ?>" alt="Capa de <?= htmlspecialchars($livro['titulo']) ?>" style="width: 100%; max-height: 260px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         </div>
 
                         <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
@@ -104,17 +104,15 @@ try {
 
     <script>
         function alugarLivro(idLivro, tituloLivro) {
-        // Caixa de texto informativa detalhando as regras de devolução e multas
             let termoCompromisso = "📋 TERMOS DE EMPRÉSTIMO\n\n" +
                                    "Livro: \"" + tituloLivro + "\"\n\n" +
                                    "1. O prazo máximo para leitura e devolução é de 7 dias.\n" +
                                    "2. Caso o prazo expire, será aplicada uma multa automática de R$ 5,00 por CADA DIA de atraso.\n\n" +
                                    "Você concorda com as condições e confirma a retirada do livro?";
 
-            // Dispara o alerta padrão do navegador
             if (confirm(termoCompromisso)) {
                 
-                // Envia a requisição assíncrona para o arquivo alugar.php salvar no banco
+                // Mudado o destino para alugar.php para corresponder ao script criado
                 fetch('alugar.php', {
                     method: 'POST',
                     headers: {
@@ -122,20 +120,23 @@ try {
                     },
                     body: 'id=' + idLivro
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro HTTP no servidor (Status " + response.status + ")");
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.sucesso) {
-                        // Exibe mensagem de sucesso indicando a data final limite gerada pelo PHP
                         alert("🎉 Empréstimo realizado com sucesso!\n\n📅 Data limite para devolução: " + data.data_devolucao + "\nBoa leitura!");
-                        window.location.reload(); // Atualiza a página para decrementar o estoque na tela
+                        window.location.reload(); 
                     } else {
-                        // Exibe mensagens de erro vindas do alugar.php (ex: livro esgotado)
                         alert("⚠️ " + data.mensagem);
                     }
                 })
                 .catch(error => {
-                    console.error('Erro na requisição:', error);
-                    alert("Erro interno ao processar o aluguel. Tente novamente.");
+                    console.error('Erro detalhado na requisição:', error);
+                    alert("Erro interno na comunicação com o sistema:\n" + error.message);
                 });
             }
         }

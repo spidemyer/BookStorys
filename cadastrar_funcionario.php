@@ -1,7 +1,12 @@
 <?php
-// cadastrar_funcionario.php
 session_start();
 require_once 'conexao.php';
+
+// Exige que um funcionário esteja logado para cadastrar outro
+if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
+    header("Location: login_admin.php");
+    exit;
+}
 
 $mensagem = '';
 $tipo_mensagem = '';
@@ -27,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 $mensagem = "Funcionário cadastrado com sucesso!";
                 $tipo_mensagem = "sucesso";
+                
+                // Redireciona para o painel de estoque após 2 segundos para dar tempo de ler o sucesso
+                header("Refresh: 2; url=admin_estoque.php");
             }
         } catch (PDOException $e) { //em caso de erro no banco mostra a mensagem
             $mensagem = "Erro no banco de dados: " . $e->getMessage();

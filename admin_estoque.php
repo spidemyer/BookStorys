@@ -12,7 +12,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 $mensagem = $_GET['mensagem'] ?? ''; 
 $tipo_mensagem = $_GET['tipo'] ?? '';
 
-//parte de excluir o livro do estoque
+// excluir livros
 if (isset($_GET['excluir'])) { 
     $id_excluir = (int)$_GET['excluir']; 
     try {
@@ -34,6 +34,7 @@ if (isset($_GET['excluir'])) {
     }
 }
 
+// Parte da devolução dos livros
 if (isset($_GET['devolver'])) {
     $id_aluguel = (int)$_GET['devolver'];
     try {
@@ -70,6 +71,7 @@ if (isset($_GET['devolver'])) {
     }
 }
 
+// consulta da pagina de estoque e alugueis
 try {
     // Busca o catálogo completo de livros
     $stmt = $conn->query("SELECT id, titulo, autor, estoque, url_capa FROM livros ORDER BY titulo ASC"); 
@@ -108,6 +110,9 @@ try {
         <div class="nav-actions">
             <span class="user-name"><i class="fa-regular fa-circle-user"></i> <?= htmlspecialchars($_SESSION['user_nome'] ?? 'Painel') ?></span> 
             <a href="biblioteca.php" class="btn-alt"><i class="fa-solid fa-store"></i> Ver Vitrine</a>
+            
+            <a href="cadastrar_funcionario.php" class="btn-alt" style="background: #8b5cf6; color: #fff; border-color: #8b5cf6;"><i class="fa-solid fa-user-plus"></i> Cadastrar Funcionário</a>
+            
             <a href="logout.php" class="btn-alt" style="color: #dc2626;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
     </nav>
@@ -200,14 +205,12 @@ try {
                 <tbody>
                     <?php if (count($emprestimos) > 0): ?>
                         <?php foreach($emprestimos as $emp): 
-                            // Configurações de fuso horário e tratamento visual do status
                             $data_aluguel_formatada = date('d/m/Y', strtotime($emp['data_aluguel']));
                             $data_dev_formatada = date('d/m/Y', strtotime($emp['data_devolucao_prevista']));
                             
                             $hoje = date('Y-m-d');
                             $esta_atrasado = ($hoje > $emp['data_devolucao_prevista']);
 
-                            // Cálculo matemático da multa em tempo real (R$ 5,00 por dia útil/corrido vencido)
                             $valor_multa = 0;
                             $dias_atraso = 0;
 
@@ -348,12 +351,10 @@ try {
     </div>
 
     <script>
-        // Modal de Cadastro
-        function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = 'flex'; }
+        function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = 'flex'; } // Abre o modal de cadastro
         function fecharModalCadastro() { document.getElementById('modalCadastro').style.display = 'none'; }
-        
-        // Modal de Edição de Livros
         function fecharModalEditar() { document.getElementById('modalEditar').style.display = 'none'; }
+        
         function editarLivro(id, titulo, autor, estoque) {
             document.getElementById('editar_id').value = id;
             document.getElementById('editar_titulo').value = titulo;
@@ -362,7 +363,6 @@ try {
             document.getElementById('modalEditar').style.display = 'flex';
         }
 
-        // Parte para editar o prazo de devolução dos livros
         function abrirModalPrazo(idAluguel, dataAtual, tituloLivro) {
             document.getElementById('prazo_aluguel_id').value = idAluguel;
             document.getElementById('nova_data_prazo').value = dataAtual;
@@ -371,27 +371,22 @@ try {
         }
         function fecharModalPrazo() { document.getElementById('modalPrazo').style.display = 'none'; }
 
-        // Validações e Caixas de Diálogo de Confirmação Críticas
         function confirmarExclusao(id, titulo) {
-            if (confirm("Tem certeza que deseja remover o livro '" + titulo + "' permanentemente do sistema?")) {
+            if (confirm("Tem certeza que deseja remover o livro '" + titulo + "' permanentemente?")) {
                 window.location.href = "admin_estoque.php?excluir=" + id;
             }
         }
 
-        // Função JavaScript adaptada para exibir notificação de multa ativa 
         function confirmarDevolucaoComMulta(idAluguel, livro, usuario, valorMulta) {
             let mensagem = "Confirmar que o leitor '" + usuario + "' devolveu o livro '" + livro + "' físico?";
-            
             if (valorMulta !== "0,00") {
                 mensagem += "\n\n⚠️ ATENÇÃO FINANCEIRA: Este livro está atrasado!\nCobrar o valor de R$ " + valorMulta + " referente à multa antes de confirmar.";
             }
-
             if (confirm(mensagem)) {
                 window.location.href = "admin_estoque.php?devolver=" + idAluguel;
             }
         }
 
-        // Fecha as modais se clicar na parte escura do fundo
         window.onclick = function(event) {
             let modalCad = document.getElementById('modalCadastro');
             let modalEdi = document.getElementById('modalEditar');
