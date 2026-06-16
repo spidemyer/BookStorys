@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //formulario de cadastro
             </div>
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" name="email" placeholder="nome.sobrenome@empresa.com" required>
+                <input type="email" name="email" placeholder="nome.sobrenome@gmail.com" required>
             </div>
             <div class="input-group">
                 <label>Senha</label>
