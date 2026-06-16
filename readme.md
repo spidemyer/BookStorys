@@ -76,7 +76,9 @@ git clone https://github.com/spidemyer/BookStorys.git
 ```
 Depois, entre na pasta do projeto: 
 
+```bash
 cd bookstorys
+```
 
 ### 3.2 Configurar o Banco de Dados (PostgreSQL)
 Abra o seu gerenciador do PostgreSQL (ex: pgAdmin).
@@ -87,13 +89,12 @@ Importe o arquivo de script SQL (caso possua um database.sql ou similar) ou cert
 
 Abra o arquivo conexao.php no VS Code e ajuste as credenciais de acesso:
 
+```bash
 $host = 'localhost';
-
 $db = 'bookstorys';
-
 $user = 'postgres';
-
 $password = 'postgres';
+```
 
 ### 3.3 Iniciar o Servidor Local
 
