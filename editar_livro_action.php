@@ -32,7 +32,7 @@ try {
         
         $extensionsPermitidas = ['jpg', 'jpeg', 'png'];
         
-        if (in_array($fileExtension, $extensionsPermitidas)) {
+        if (in_array($fileExtension, $extensionsPermitidas)) { 
             $novoNome = time() . '_update_' . uniqid() . '.' . $fileExtension;
             $dest_path = './' . $novoNome;
             

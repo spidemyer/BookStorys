@@ -16,7 +16,7 @@ $tipo_mensagem = $_GET['tipo'] ?? '';
 if (isset($_GET['excluir'])) { 
     $id_excluir = (int)$_GET['excluir']; 
     try {
-        $stmt_busca = $conn->prepare("SELECT url_capa FROM livros WHERE id = ?");
+        $stmt_busca = $conn->prepare("SELECT url_capa FROM livros WHERE id = ?"); 
         $stmt_busca->execute([$id_excluir]);
         $livro_img = $stmt_busca->fetch();
 

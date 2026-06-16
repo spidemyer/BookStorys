@@ -3,16 +3,16 @@ session_start();
 require_once 'conexao.php'; 
 
 // Verifica se o usuário está logado. Se não, redireciona para o login 
-if (!isset($_SESSION['user_logged']) || $_SESSION['user_logged'] !== true) {
+if (!isset($_SESSION['user_logged']) || $_SESSION['user_logged'] !== true) { 
     header("Location: index.php");
     exit;
 }
 
 // Busca todos os livros do catálogo para exibir na vitrine
 try {
-    $stmt = $conn->query("SELECT id, titulo, autor, estoque, url_capa FROM livros ORDER BY titulo ASC");
-    $livros = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+    $stmt = $conn->query("SELECT id, titulo, autor, estoque, url_capa FROM livros ORDER BY titulo ASC"); // Consulta para obter os livros ordenados por título
+    $livros = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+} catch (PDOException $e) { // Em caso de erro na consulta, exibe uma mensagem de erro
     die("Erro ao carregar os livros da biblioteca: " . $e->getMessage());
 }
 ?>
@@ -103,7 +103,7 @@ try {
     </main>
 
     <script>
-        function alugarLivro(idLivro, tituloLivro) {
+        function alugarLivro(idLivro, tituloLivro) { // Função para lidar com o processo de aluguel do livro
             let termoCompromisso = "📋 TERMOS DE EMPRÉSTIMO\n\n" +
                                    "Livro: \"" + tituloLivro + "\"\n\n" +
                                    "1. O prazo máximo para leitura e devolução é de 7 dias.\n" +

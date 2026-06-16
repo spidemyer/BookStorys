@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {  
     header("Location: admin_estoque.php");
     exit;
 }
@@ -39,7 +39,7 @@ if (isset($_FILES['capa_arquivo']) && $_FILES['capa_arquivo']['error'] === UPLOA
         $dest_path = $uploadFileDir . $novoNome;
         
         if (move_uploaded_file($fileTmpPath, $dest_path)) { 
-            // Salvamos no banco o caminho final relativo para que as views consigam carregar
+            // Salva no banco o caminho final relativo para que as views consigam carregar
             $url_capa = $dest_path;
         } else {
             header("Location: ../views/admin_estoque.php?mensagem=" . urlencode("Erro ao mover a imagem para o diretório local.") . "&tipo=erro");
@@ -54,7 +54,7 @@ if (isset($_FILES['capa_arquivo']) && $_FILES['capa_arquivo']['error'] === UPLOA
     exit;
 }
 
-try {
+try { 
     $funcionario_rf = $_SESSION['user_rf'] ?? '123456'; 
 
     $sql = "INSERT INTO livros (titulo, autor, estoque, url_capa, funcionario_rf) 
