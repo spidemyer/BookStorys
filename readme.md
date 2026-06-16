@@ -98,7 +98,9 @@ $password = 'postgres';
 
 ### 3.3 Iniciar o Servidor Local
 
+```bash
 php -S localhost:8080 
+```
 
 ### 3.4 Acessar no Navegador
 Com o servidor rodando, abra o seu navegador de preferência e acesse o endereço correspondente:
