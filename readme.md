@@ -65,16 +65,79 @@ Os requisitos não funcionais especificam restrições técnicas, qualidades arq
 
 ---
 
-## 3. Autoavaliação
+## 3 - Como Acessar e Rodar o Projeto Localmente
 
-### 3.1 O sistema funciona?
+Siga os passos abaixo para configurar o ambiente e acessar os arquivos do sistema **BookStorys** na sua máquina:
+
+### 3.1 Clonar o Repositório
+Abra o seu terminal ou prompt de comando (CMD) e execute o comando abaixo para clonar o projeto:
+```bash
+git clone https://github.com/spidemyer/BookStorys.git
+```
+Depois, entre na pasta do projeto: 
+
+cd bookstorys
+
+### 3.2 Configurar o Banco de Dados (PostgreSQL)
+Abra o seu gerenciador do PostgreSQL (ex: pgAdmin).
+
+Crie um novo banco de dados chamado bookstorys.
+
+Importe o arquivo de script SQL (caso possua um database.sql ou similar) ou certifique-se de que as tabelas usuarios, funcionarios, livros e alugueis estejam criadas.
+
+Abra o arquivo conexao.php no VS Code e ajuste as credenciais de acesso:
+
+$host = 'localhost';
+
+$db = 'bookstorys';
+
+$user = 'postgres';
+
+$password = 'postgres';
+
+### 3.3 Iniciar o Servidor Local
+
+php -S localhost:8080 
+
+### 3.4 Acessar no Navegador
+Com o servidor rodando, abra o seu navegador de preferência e acesse o endereço correspondente:
+
+Área do Cliente (Login/Cadastro): > http://localhost:8080/index.php
+
+Área do Funcionário (Acesso restrito via RF): > http://localhost:8080/login_admin.php
+
+--- 
+
+## 4 - Tecnologias Utilizadas
+
+O projeto **BookStorys** foi desenvolvido utilizando as seguintes tecnologias e ferramentas:
+
+### Back-End e Banco de Dados
+* **PHP (Versão 8.5.6):** Utilizado para toda a lógica de negócios, gerenciamento de sessões de usuários (`session_start`), validações de segurança e processamento de requisições.
+* **PostgreSQL:** Banco de dados relacional robusto utilizado para persistência dos dados de usuários, funcionários, livros e controle de aluguéis.
+* **PDO (PHP Data Objects):** Utilizado para fazer a conexão segura com o banco de dados e execução de *Prepared Statements*, prevenindo ataques de *SQL Injection*.
+
+### Front-End (Interface do Usuário)
+* **HTML5:** Estruturação semântica de todas as telas (Vitrine, Logins e Painel Administrativo).
+* **CSS3:** Estilização visual customizada baseada em componentes modernos (Cards, Grids, Modais), utilizando variáveis para controle de cores e layouts responsivos.
+* **JavaScript (ES6):** Utilizado para interações dinâmicas, como o envio assíncrono de dados via **Fetch API** (para aluguel de livros sem recarregar a página) e manipulação do DOM dos modais.
+
+### Bibliotecas e Recursos Externos
+* **Font Awesome (v6.4.0):** Biblioteca de ícones vetoriais utilizada para enriquecer visualmente os botões, campos de input e navegação do sistema.
+* **Google Fonts:** Tipografia digital integrada para melhorar a legibilidade da interface.
+
+--- 
+
+## 5. Autoavaliação
+
+### 5.1 O sistema funciona?
 
 O sistema é funcional e atende às restrições arquiteturais propostas.
 
-### 3.2 Consigo explicar o código?
+### 5.2 Consigo explicar o código?
 
 Sim, com o auxílio das explicações no código eu acredito que consigo sim explicar o código.
 
-### 3.3 Me sinto capaz de desenvolver outro sistema parecido?
+### 5.3 Me sinto capaz de desenvolver outro sistema parecido?
 
 Sim. Usando esse como base eu acredito que consiga fazer outro sistema, talvez não completamente sozinha.
