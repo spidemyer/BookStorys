@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-$erro = '';
+$erro = ''; // Variável para armazenar mensagens de erro
 
-try {
+try { // Tenta estabelecer a conexão com o banco de dados
     require_once 'conexao.php';
 } catch (Exception $e) {
     $erro = "Falha no sistema de banco de dados.";
 }
 
-if (isset($_SESSION['user_logged']) && $_SESSION['user_logged'] === true) {
+if (isset($_SESSION['user_logged']) && $_SESSION['user_logged'] === true) { // Se o usuário já estiver logado, redireciona para a biblioteca
     header("Location: biblioteca.php");
     exit;
 }

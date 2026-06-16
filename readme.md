@@ -81,13 +81,19 @@ cd bookstorys
 ```
 
 ### 3.2 Configurar o Banco de Dados (PostgreSQL)
-Abra o seu gerenciador do PostgreSQL (ex: pgAdmin).
 
-Crie um novo banco de dados chamado bookstorys.
+Criar o banco de dados:
+```bash
+createdb -U postgres bookstorys
+```
 
-Importe o arquivo de script SQL (caso possua um database.sql ou similar) ou certifique-se de que as tabelas usuarios, funcionarios, livros e alugueis estejam criadas.
+Importar o arquivo dump.sql para o novo banco
 
-Abra o arquivo conexao.php no VS Code e ajuste as credenciais de acesso:
+```bash
+psql -U postgres -d bookstorys -f dump.sql
+```
+
+Depois, abra o arquivo conexao.php no VS Code e certifique-se de que as credenciais de acesso estão assim:
 
 ```bash
 $host = 'localhost';
