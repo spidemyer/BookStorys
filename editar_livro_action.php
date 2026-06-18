@@ -17,6 +17,13 @@ if ($id <= 0 || empty($titulo) || empty($autor) || $estoque < 0) {
     exit;
 }
 
+
+// Limite Máximo de 50 CARACTERES 
+if (mb_strlen($titulo, 'UTF-8') > 50 || mb_strlen($autor, 'UTF-8') > 50) {
+    header("Location: admin_estoque.php?mensagem=" . urlencode("Erro: O título ou autor excederam o limite máximo de 50 caracteres!") . "&tipo=erro");
+    exit;
+}
+
 try {
     // Busca a imagem atual cadastrada
     $stmt_busca = $conn->prepare("SELECT url_capa FROM livros WHERE id = ?");
@@ -32,7 +39,7 @@ try {
         
         $extensionsPermitidas = ['jpg', 'jpeg', 'png'];
         
-        if (in_array($fileExtension, $extensionsPermitidas)) { 
+        if (in_array($fileExtension, $extensionsPermitidas)) { // Verifica se a extensão do arquivo é permitida
             $novoNome = time() . '_update_' . uniqid() . '.' . $fileExtension;
             $dest_path = './' . $novoNome;
             

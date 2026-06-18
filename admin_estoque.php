@@ -91,7 +91,8 @@ try {
 } catch (PDOException $e) { 
     die("Erro ao carregar o painel administrativo: " . $e->getMessage());
 }
-?>
+?> 
+<!-- adicionei o css direto no html aqui para tornar a tela responsiva e não dar bug -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -100,6 +101,46 @@ try {
     <title>BookStorys - Painel Administrativo</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .book-title-cell, .book-author-cell, .admin-table td strong, .admin-table td div {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            display: block;
+        }
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 992px) {
+            .navbar { flex-direction: column; padding: 15px; gap: 15px; height: auto; }
+            .nav-actions { flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px; }
+            .admin-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .btn-add { width: 100%; justify-content: center; padding: 12px; }
+        }
+        @media (max-width: 576px) {
+            .nav-actions { flex-direction: column; align-items: stretch; }
+            .nav-actions .btn-alt, .nav-actions .user-name { text-align: center; justify-content: center; display: flex; }
+            .modal-content { width: 95%; margin: 10px; padding: 20px; }
+        }
+    </style>
 </head>
 <body class="body-dashboard">
 
@@ -110,9 +151,7 @@ try {
         <div class="nav-actions">
             <span class="user-name"><i class="fa-regular fa-circle-user"></i> <?= htmlspecialchars($_SESSION['user_nome'] ?? 'Painel') ?></span> 
             <a href="biblioteca.php" class="btn-alt"><i class="fa-solid fa-store"></i> Ver Vitrine</a>
-            
             <a href="cadastrar_funcionario.php" class="btn-alt" style="background: #8b5cf6; color: #fff; border-color: #8b5cf6;"><i class="fa-solid fa-user-plus"></i> Cadastrar Funcionário</a>
-            
             <a href="logout.php" class="btn-alt" style="color: #dc2626;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
     </nav>
@@ -143,8 +182,8 @@ try {
                         <th style="width: 80px; text-align: center;">Capa</th>
                         <th>Título do Livro</th>
                         <th>Autor / Escritor</th>
-                        <th style="text-align: center;">Quantidade</th>
-                        <th style="text-align: right;">Ações</th>
+                        <th style="text-align: center; width: 120px;">Quantidade</th>
+                        <th style="text-align: right; width: 120px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -197,9 +236,9 @@ try {
                     <tr>
                         <th>Livro Alugado</th>
                         <th>Quem Emprestou</th>
-                        <th style="text-align: center;">Data do Aluguel</th>
-                        <th style="text-align: center;">Prazo de Devolução</th>
-                        <th style="text-align: right;">Ações</th>
+                        <th style="text-align: center; width: 140px;">Data do Aluguel</th>
+                        <th style="text-align: center; width: 180px;">Prazo de Devolução</th>
+                        <th style="text-align: right; width: 200px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -207,12 +246,9 @@ try {
                         <?php foreach($emprestimos as $emp): 
                             $data_aluguel_formatada = date('d/m/Y', strtotime($emp['data_aluguel']));
                             $data_dev_formatada = date('d/m/Y', strtotime($emp['data_devolucao_prevista']));
-                            
                             $hoje = date('Y-m-d');
                             $esta_atrasado = ($hoje > $emp['data_devolucao_prevista']);
-
-                            $valor_multa = 0;
-                            $dias_atraso = 0;
+                            $valor_multa = 0; $dias_atraso = 0;
 
                             if ($esta_atrasado) {
                                 $data_hoje_obj = new DateTime($hoje);
@@ -223,16 +259,12 @@ try {
                             }
                         ?>
                             <tr>
-                                <td>
-                                    <strong style="color: #1e293b;"><?= htmlspecialchars($emp['livro_titulo']) ?></strong>
-                                </td>
+                                <td><strong style="color: #1e293b;"><?= htmlspecialchars($emp['livro_titulo']) ?></strong></td>
                                 <td>
                                     <div style="font-size: 0.9rem; font-weight: 500; color: #334155;"><?= htmlspecialchars($emp['usuario_nome']) ?></div>
                                     <div style="font-size: 0.75rem; color: #64748b;"><i class="fa-regular fa-envelope"></i> <?= htmlspecialchars($emp['usuario_email']) ?></div>
                                 </td>
-                                <td style="text-align: center; font-size: 0.9rem; color: #475569;">
-                                    <?= $data_aluguel_formatada ?>
-                                </td>
+                                <td style="text-align: center; font-size: 0.9rem; color: #475569;"><?= $data_aluguel_formatada ?></td>
                                 <td style="text-align: center;">
                                     <?php if($esta_atrasado): ?>
                                         <span class="badge-qty zero" style="font-weight: 600; display: inline-block; margin-bottom: 4px;"><i class="fa-solid fa-clock"></i> Atrasado (<?= $data_dev_formatada ?>)</span>
@@ -243,33 +275,19 @@ try {
                                 </td>
                                 <td style="text-align: right;">
                                     <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
-                                        
-                                        <form action="editar_prazo_action.php" method="POST" style="margin:0;" onsubmit="return confirm('Deseja renovar o aluguel de \'<?= addslashes($emp['livro_titulo']) ?>\' por mais 7 dias?')">
+                                        <form action="editar_prazo_action.php" method="POST" style="margin:0;" onsubmit="return confirm('Deseja renovar o aluguel por mais 7 dias?')">
                                             <input type="hidden" name="aluguel_id" value="<?= $emp['aluguel_id'] ?>">
                                             <input type="hidden" name="acao" value="renovar">
-                                            <button type="submit" class="btn-action edit" style="background: #fef3c7; color: #d97706; border: 1px solid #fde68a;" title="Renovar +7 dias automaticamente">
-                                                <i class="fa-solid fa-arrows-rotate"></i>
-                                            </button>
+                                            <button type="submit" class="btn-action edit" style="background: #fef3c7; color: #d97706; border: 1px solid #fde68a;"><i class="fa-solid fa-arrows-rotate"></i></button>
                                         </form>
-
-                                        <button class="btn-action edit" onclick="abrirModalPrazo(<?= $emp['aluguel_id'] ?>, '<?= $emp['data_devolucao_prevista'] ?>', '<?= addslashes($emp['livro_titulo']) ?>')" title="Aumentar ou diminuir prazo manual">
-                                            <i class="fa-solid fa-calendar-days"></i>
-                                        </button>
-
-                                        <button class="btn-add" style="padding: 6px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin:0;" onclick="confirmarDevolucaoComMulta(<?= $emp['aluguel_id'] ?>, '<?= addslashes($emp['livro_titulo']) ?>', '<?= addslashes($emp['usuario_nome']) ?>', '<?= number_format($valor_multa, 2, ',', '.') ?>')">
-                                            <i class="fa-solid fa-arrow-rotate-left"></i> Receber
-                                        </button>
+                                        <button class="btn-action edit" onclick="abrirModalPrazo(<?= $emp['aluguel_id'] ?>, '<?= $emp['data_devolucao_prevista'] ?>', '<?= addslashes($emp['livro_titulo']) ?>')"><i class="fa-solid fa-calendar-days"></i></button>
+                                        <button class="btn-add" style="padding: 6px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); margin:0;" onclick="confirmarDevolucaoComMulta(<?= $emp['aluguel_id'] ?>, '<?= addslashes($emp['livro_titulo']) ?>', '<?= addslashes($emp['usuario_nome']) ?>', '<?= number_format($valor_multa, 2, ',', '.') ?>')"><i class="fa-solid fa-arrow-rotate-left"></i> Receber</button>
                                     </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: #64748b; padding: 40px;">
-                                <i class="fa-solid fa-circle-check" style="font-size: 2rem; display: block; margin-bottom: 10px; color: #cbd5e1;"></i>
-                                Excelente! Todos os livros estão guardados no estoque no momento.
-                            </td>
-                        </tr>
+                        <tr><td colspan="5" style="text-align: center; color: #64748b; padding: 40px;">Todos os livros estão no estoque.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -280,15 +298,16 @@ try {
         <div class="modal-content">
             <button class="close-modal" onclick="fecharModalCadastro()">&times;</button>
             <h2>Novo Livro</h2>
-            <p class="subtitle">Insira as informações básicas e envie o arquivo de imagem da capa</p>
-            <form action="cadastrar_livro_action.php" method="POST" enctype="multipart/form-data">
+            <form action="cadastrar_livro_action.php" method="POST" enctype="multipart/form-data" onsubmit="return validarLimiteCaracteres(this)">
                 <div class="input-group">
                     <label>Título do Livro</label>
-                    <input type="text" name="titulo" required>
+                    <input type="text" name="titulo" maxlength="50" required>
+                    <span class="contador-caracteres" style="font-size: 0.8rem; color: #64748b; display: block; margin-top: 4px;">0 / 50 caracteres</span>
                 </div>
                 <div class="input-group">
                     <label>Autor</label>
-                    <input type="text" name="autor" required>
+                    <input type="text" name="autor" maxlength="50" required>
+                    <span class="contador-caracteres" style="font-size: 0.8rem; color: #64748b; display: block; margin-top: 4px;">0 / 50 caracteres</span>
                 </div>
                 <div class="input-group">
                     <label>Quantidade em Estoque</label>
@@ -307,15 +326,17 @@ try {
         <div class="modal-content">
             <button class="close-modal" onclick="fecharModalEditar()">&times;</button> 
             <h2>Editar Livro</h2>
-            <form action="editar_livro_action.php" method="POST" enctype="multipart/form-data">
+            <form action="editar_livro_action.php" method="POST" enctype="multipart/form-data" onsubmit="return validarLimiteCaracteres(this)">
                 <input type="hidden" id="editar_id" name="id">
                 <div class="input-group">
                     <label>Título do Livro</label>
-                    <input type="text" id="editar_titulo" name="titulo" required>
+                    <input type="text" id="editar_titulo" name="titulo" maxlength="50" required>
+                    <span class="contador-caracteres" style="font-size: 0.8rem; color: #64748b; display: block; margin-top: 4px;">0 / 50 caracteres</span>
                 </div>
                 <div class="input-group">
                     <label>Autor / Escritor</label>
-                    <input type="text" id="editar_autor" name="autor" required>
+                    <input type="text" id="editar_autor" name="autor" maxlength="50" required>
+                    <span class="contador-caracteres" style="font-size: 0.8rem; color: #64748b; display: block; margin-top: 4px;">0 / 50 caracteres</span>
                 </div>
                 <div class="input-group">
                     <label>Quantidade em Estoque</label>
@@ -334,36 +355,83 @@ try {
         <div class="modal-content" style="max-width: 400px;">
             <button class="close-modal" onclick="fecharModalPrazo()">&times;</button> 
             <h2>Alterar Devolução</h2>
-            <p class="subtitle" id="texto_modal_prazo">Ajuste o prazo limite para o livro</p>
-            
+            <p class="subtitle" id="texto_modal_prazo">Ajuste o prazo limite</p>
             <form action="editar_prazo_action.php" method="POST">
                 <input type="hidden" id="prazo_aluguel_id" name="aluguel_id">
                 <input type="hidden" name="acao" value="salvar">
-                
                 <div class="input-group">
                     <label>Nova Data de Devolução</label>
-                    <input type="date" id="nova_data_prazo" name="nova_data" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit;">
+                    <input type="date" id="nova_data_prazo" name="nova_data" required style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
                 </div>
-                
                 <button type="submit" class="btn" style="margin-top: 15px; width: 100%;">Atualizar Prazo</button>
             </form>
         </div>
     </div>
 
     <script>
-        function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = 'flex'; } // Abre o modal de cadastro
-        function fecharModalCadastro() { document.getElementById('modalCadastro').style.display = 'none'; }
+        // Função atualizada para contar caracteres
+        function atualizarContador(input) {
+            let container = input.parentElement;
+            let span = container.querySelector('.contador-caracteres');
+            if (!span) return;
+            
+            let totalCaracteres = input.value.length;
+            span.innerText = totalCaracteres + " / 50 caracteres";
+            
+            if (totalCaracteres > 50) {
+                span.style.color = "#dc2626";
+                input.style.borderColor = "#dc2626";
+            } else {
+                span.style.color = "#64748b";
+                input.style.borderColor = "#cbd5e1";
+            }
+        }
+
+        document.querySelectorAll('input[name="titulo"], input[name="autor"]').forEach(input => { // Seleciona os campos de título e autor
+            input.addEventListener('input', function() {
+                atualizarContador(this);
+            });
+        });
+
+        // Validação do botão de envio focada em caracteres
+        function validarLimiteCaracteres(form) {
+            let tituloLength = form.querySelector('[name="titulo"]').value.length;
+            let autorLength = form.querySelector('[name="autor"]').value.length;
+
+            if (tituloLength > 50) {
+                alert("⚠️ Erro: O Título ultrapassou o limite máximo de 50 caracteres!");
+                return false; 
+            }
+
+            if (autorLength > 50) {
+                alert("⚠️ Erro: O nome do Autor ultrapassou o limite máximo de 50 caracteres!");
+                return false; 
+            }
+
+            return true; 
+        }
+// Funções para abrir e fechar os modais
+        function abrirModalCadastro() { document.getElementById('modalCadastro').style.display = 'flex'; }
+        function fecharModalCadastro() { document.getElementById('modalCadastro').style.none; }
         function fecharModalEditar() { document.getElementById('modalEditar').style.display = 'none'; }
         
         function editarLivro(id, titulo, autor, estoque) {
+            let inputTitulo = document.getElementById('editar_titulo');
+            let inputAutor = document.getElementById('editar_autor');
+
             document.getElementById('editar_id').value = id;
-            document.getElementById('editar_titulo').value = titulo;
-            document.getElementById('editar_autor').value = autor;
+            inputTitulo.value = titulo;
+            inputAutor.value = autor;
             document.getElementById('editar_estoque').value = estoque;
+            
+            // Atualiza a contagem ao abrir
+            atualizarContador(inputTitulo);
+            atualizarContador(inputAutor);
+
             document.getElementById('modalEditar').style.display = 'flex';
         }
 
-        function abrirModalPrazo(idAluguel, dataAtual, tituloLivro) {
+        function abrirModalPrazo(idAluguel, dataAtual, tituloLivro) { // Recebe o ID do aluguel, a data atual e o título do livro para personalizar o modal
             document.getElementById('prazo_aluguel_id').value = idAluguel;
             document.getElementById('nova_data_prazo').value = dataAtual;
             document.getElementById('texto_modal_prazo').innerText = "Ajuste o prazo limite para: " + tituloLivro;
@@ -371,23 +439,21 @@ try {
         }
         function fecharModalPrazo() { document.getElementById('modalPrazo').style.display = 'none'; }
 
-        function confirmarExclusao(id, titulo) {
-            if (confirm("Tem certeza que deseja remover o livro '" + titulo + "' permanentemente?")) {
+        function confirmarExclusao(id, titulo) { 
+            if (confirm("Tem certeza que deseja remover o livro '" + titulo + "'?")) {
                 window.location.href = "admin_estoque.php?excluir=" + id;
             }
         }
 
         function confirmarDevolucaoComMulta(idAluguel, livro, usuario, valorMulta) {
-            let mensagem = "Confirmar que o leitor '" + usuario + "' devolveu o livro '" + livro + "' físico?";
+            let mensagem = "Confirmar que '" + usuario + "' devolveu o livro '" + livro + "'?";
             if (valorMulta !== "0,00") {
-                mensagem += "\n\n⚠️ ATENÇÃO FINANCEIRA: Este livro está atrasado!\nCobrar o valor de R$ " + valorMulta + " referente à multa antes de confirmar.";
+                mensagem += "\n\n⚠️ ATENÇÃO: Cobrar multa de R$ " + valorMulta + " antes de receber!";
             }
-            if (confirm(mensagem)) {
-                window.location.href = "admin_estoque.php?devolver=" + idAluguel;
-            }
+            if (confirm(mensagem)) { window.location.href = "admin_estoque.php?devolver=" + idAluguel; }
         }
 
-        window.onclick = function(event) {
+        window.onclick = function(event) { // Fecha os modais ao clicar fora do conteúdo
             let modalCad = document.getElementById('modalCadastro');
             let modalEdi = document.getElementById('modalEditar');
             let modalPrz = document.getElementById('modalPrazo');
@@ -396,5 +462,5 @@ try {
             if (event.target == modalPrz) { modalPrz.style.display = 'none'; }
         }
     </script>
-</body>
+    </body>
 </html>
